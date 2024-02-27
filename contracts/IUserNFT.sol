@@ -12,4 +12,10 @@ interface IUserNFT {
     function supportsInterface(
         bytes4 interfaceId
     ) external  view  returns (bool);
+
+    function mint(
+        address _to,
+        uint256 _tokenId,
+        string memory _tokenURI
+    ) external;
 }

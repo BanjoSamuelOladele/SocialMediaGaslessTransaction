@@ -20,6 +20,15 @@ contract NFTFactory {
         return IUserNFT(contractAddr).tokenURI(tokenId);
     }
 
+    function mintNFT(
+        address _to,
+        uint256 _tokenId,
+        address contractAddr,
+        string memory _tokenURI
+    ) external{
+        IUserNFT(contractAddr).mint(_to, _tokenId, _tokenURI);
+    }
+
     function supportsInterface(
         address contractAddr, 
         bytes4 interfaceId
