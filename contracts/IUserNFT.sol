@@ -5,17 +5,7 @@
 pragma solidity ^*;
 
 interface IUserNFT {
-    function tokenURI(
-        uint256 tokenId
-    ) external  view returns (string memory);
+    function safeMint(address _to, string memory _contentURI) external returns (uint);
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) external  view  returns (bool);
-
-    function mint(
-        address _to,
-        uint256 _tokenId,
-        string memory _tokenURI
-    ) external;
+    function viewIdURI(uint256 id) external view returns (string memory idUri);
 }

@@ -2,16 +2,20 @@
 pragma solidity ^*;
 import "./NFTFactory.sol";
 import "./Group.sol";
+import "./Post.sol";
 
 
 contract SocialMedia{
 
     NFTFactory private nftFactory;
     Group private newGroup;
+    Post private  post;
+
 
     constructor(){
         nftFactory = new NFTFactory();
         newGroup = new Group();
+        post = new Post();
     }
 
     struct User{
@@ -76,6 +80,11 @@ contract SocialMedia{
             newGroup.createGroup(name);
         }
         else revert();
+    }
+
+    function createPost(string calldata title, string calldata desc, string memory _contentURI) external {
+        uint id = nftFactory.mintNFT(msg.sender, _contentURI, userNft[msg.sender]);
+        post.createPost(title, desc, msg.sender, id);
     }
 
 }

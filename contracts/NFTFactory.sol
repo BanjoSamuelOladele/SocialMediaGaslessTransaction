@@ -13,26 +13,11 @@ contract NFTFactory {
         return address(nft);
     }
 
-    function tokenURI(
-        address contractAddr,
-        uint256 tokenId
-    ) external  view returns (string memory){
-        return IUserNFT(contractAddr).tokenURI(tokenId);
+    function mintNFT(address _to, string memory _contentURI, address contractAddr) external returns (uint){
+        return IUserNFT(contractAddr).safeMint(_to, _contentURI);
     }
 
-    function mintNFT(
-        address _to,
-        uint256 _tokenId,
-        address contractAddr,
-        string memory _tokenURI
-    ) external{
-        IUserNFT(contractAddr).mint(_to, _tokenId, _tokenURI);
-    }
-
-    function supportsInterface(
-        address contractAddr, 
-        bytes4 interfaceId
-    ) external  view returns (bool) {
-        return IUserNFT(contractAddr).supportsInterface(interfaceId);
+    function viewIdURI(uint256 id, address contractAddr) external view returns (string memory idUri){
+        return IUserNFT(contractAddr).viewIdURI(id);
     }
 }
