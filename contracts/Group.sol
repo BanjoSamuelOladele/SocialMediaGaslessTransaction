@@ -26,10 +26,11 @@ contract Group{
     // mapping ()
 
 
-    function createGroup(string memory name) external {
+    function createGroup(string memory name, address owner) external {
+        require(owner != address(0), "Address zero");
         NewGroup memory group;
         group.name = name;
-        group.owner = msg.sender;
+        group.owner = owner;
         groups[msg.sender].push(group);
     }
 

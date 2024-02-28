@@ -30,6 +30,7 @@ contract Post{
 
     mapping (address => uint) private userPostCount;
     mapping (address => NewPost[]) private userPosts;
+    NewPost[] public allPosts;
 
     function createPost(string calldata title, string calldata desc, address user, uint url) external {
         NewPost storage post = userPosts[user][userPostCount[user]];
@@ -39,7 +40,14 @@ contract Post{
         post.url = url;
         post.createdTime = block.timestamp;
         post._id = userPostCount[user];
+        allPosts.push(post);
 
         userPostCount[user] = userPostCount[user] + 1;
     }
+
+    function getAllPosts() external view returns(NewPost[] memory) {
+        return allPosts;
+    }
+
+    
 }

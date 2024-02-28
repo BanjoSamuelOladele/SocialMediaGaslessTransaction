@@ -41,14 +41,14 @@ contract SocialMedia{
 
     event RegisterUser(address);
 
-    function registerUser(string memory name, string memory symbol) external {
+    function registerUser(string memory name, string memory username) external {
         confirmUserAddress();
         User storage user = users[msg.sender];
         user.addr = msg.sender;
-        user.details = Details(name, symbol);
+        user.details = Details(name, username);
         user.role = Role.USER;
 
-        address nftCreated = nftFactory.createNFT(name, symbol);
+        address nftCreated = nftFactory.createNFT(name, username);
         userNft[msg.sender] = nftCreated;
 
 
@@ -77,7 +77,7 @@ contract SocialMedia{
         onlyUser();
         bool checkLogIn = isLoggedIn[msg.sender];
         if (checkLogIn){
-            newGroup.createGroup(name);
+            newGroup.createGroup(name, msg.sender);
         }
         else revert();
     }
@@ -87,4 +87,11 @@ contract SocialMedia{
         post.createPost(title, desc, msg.sender, id);
     }
 
+    function getUser() external view returns (User memory){
+        return users[msg.sender];
+    }
+
+    function getAllPosts() external view returns(Post.NewPost[] memory) {
+        return post.getAllPosts();
+    }
 }

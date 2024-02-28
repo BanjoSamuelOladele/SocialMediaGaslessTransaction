@@ -24,6 +24,7 @@ contract Comment{
     mapping (address => mapping (uint => uint)) private postCounts;
     mapping (address => mapping (uint => NewComment[])) private comments;
 
+
     function createComment(address postOwner, address commenter, uint id, string calldata _comment) external {
         NewComment storage comment = comments[postOwner][id][postCounts[postOwner][id]];
         comment.comment = _comment;
@@ -33,6 +34,4 @@ contract Comment{
 
         postCounts[postOwner][id] = postCounts[postOwner][id] + 1;
     }
-
-
 }
