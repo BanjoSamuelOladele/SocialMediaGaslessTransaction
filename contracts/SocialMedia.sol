@@ -36,6 +36,7 @@ contract SocialMedia{
 
     mapping(address => User) private users;
     mapping(address => address) private userNft; 
+    mapping(address => bool) private isRegistered;
 
     mapping(address => bool) private isLoggedIn;
 
@@ -43,16 +44,19 @@ contract SocialMedia{
 
     function registerUser(string memory name, string memory username) external {
         confirmUserAddress();
-        User storage user = users[msg.sender];
-        user.addr = msg.sender;
-        user.details = Details(name, username);
-        user.role = Role.USER;
+        bool isAUser = isRegistered[msg.sender];
+        if (!isAUser) {
+            User storage user = users[msg.sender];
+            user.addr = msg.sender;
+            user.details = Details(name, username);
+            user.role = Role.USER;
 
-        address nftCreated = nftFactory.createNFT(name, username);
-        userNft[msg.sender] = nftCreated;
-
-
-        emit RegisterUser(msg.sender);
+            address nftCreated = nftFactory.createNFT(name, username);
+            userNft[msg.sender] = nftCreated; 
+            isRegistered[msg.sender] = true;
+            emit RegisterUser(msg.sender);  
+        }
+        else revert();
     }
 
     function loginUser() external returns (bool) {
@@ -83,8 +87,12 @@ contract SocialMedia{
     }
 
     function createPost(string calldata title, string calldata desc, string memory _contentURI) external {
-        uint id = nftFactory.mintNFT(msg.sender, _contentURI, userNft[msg.sender]);
-        post.createPost(title, desc, msg.sender, id);
+        bool checkLogIn = isLoggedIn[msg.sender];
+        if (checkLogIn){
+            uint id = nftFactory.mintNFT(msg.sender, _contentURI, userNft[msg.sender]);
+            post.createPost(title, desc, msg.sender, id);
+        }
+        else revert();
     }
 
     function getUser() external view returns (User memory){
