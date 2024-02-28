@@ -8,7 +8,6 @@ import "./Like.sol";
 
 
 contract Post{
-
     uint private id;
 
     struct NewPost{
@@ -27,27 +26,44 @@ contract Post{
         comment = new Comment();
         like = new Like();
     }
-
-    mapping (address => uint) private userPostCount;
     mapping (address => NewPost[]) private userPosts;
-    NewPost[] public allPosts;
+    NewPost[] private allPosts;
 
     function createPost(string calldata title, string calldata desc, address user, uint url) external {
-        NewPost storage post = userPosts[user][userPostCount[user]];
-        post.title = title;
-        post.description = desc;
-        post.postCreator = user;
-        post.url = url;
-        post.createdTime = block.timestamp;
-        post._id = userPostCount[user];
+        NewPost memory post = NewPost(id++, title, user, desc, url, block.timestamp);
+        userPosts[user].push(post);
         allPosts.push(post);
+    }
 
-        userPostCount[user] = userPostCount[user] + 1;
+    function getUserPost(address user) external view returns(NewPost[] memory){
+        return userPosts[user];
+    }
+
+    function getPostByIndex(uint index) external view returns(NewPost memory) {
+        return allPosts[index];
     }
 
     function getAllPosts() external view returns(NewPost[] memory) {
         return allPosts;
     }
 
-    
+    function likePost(uint postId, address user) external returns (bool){
+        return like.toggleLikePost(postId, user);
+    }
+
+    function getPostLikesCounts(uint postId) external view returns (uint){
+        return like.getPostLikesCounts(postId);
+    }
+
+    function commentOnPost(address commenter, uint postId, string calldata _comment) external {
+        comment.createComment(commenter, postId, _comment);
+    }
+
+    function likeCommentOnPost(uint postId, uint commentId, address user) external returns (bool) {
+        return comment.togglePostCommentLike(postId, commentId, user);
+    }
+
+    function getNumberOfPostCommentLikes(uint postId, uint commentId) external view returns (uint) {
+        return like.getPostCommentLikesCount(postId, commentId);
+    }
 }
