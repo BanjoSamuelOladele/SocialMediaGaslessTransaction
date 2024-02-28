@@ -7,19 +7,33 @@ pragma solidity ^*;
 
 contract Like{
 
-    mapping ( address => mapping (uint => mapping (uint => mapping (address => bool)))) private commentLikes;
-    mapping ( address => mapping (uint => mapping (uint => uint))) private commentLikesCounts;
-    mapping (address => mapping (uint => mapping (address => bool))) private postLikes;
-    mapping (address => mapping (uint => uint)) private postLikesCounts;
+    mapping (uint => mapping (uint => mapping (address => bool))) private commentLikes;
+    mapping (uint => mapping (uint => uint)) private commentLikesCounts;
 
-    function likeCommentPost(address postOwner, uint id, uint _id, address user) external {
-        commentLikes[postOwner][id][_id][user] = !commentLikes[postOwner][id][_id][user];
-        if (commentLikes[postOwner][id][_id][user]) commentLikesCounts[postOwner][id][_id] += 1;
-        else commentLikesCounts[postOwner][id][_id] -= 1;
+    mapping (uint=> mapping (address => bool)) private postLikes;
+    mapping (uint => uint) private postLikesCounts;
+
+    function toggleLikeCommentPost(uint postId, uint commentId, address user) external returns (bool) {
+        commentLikes[postId][commentId][user] = !commentLikes[postId][commentId][user];
+        if (commentLikes[postId][commentId][user]) commentLikesCounts[postId][commentId] += 1;
+        else commentLikesCounts[postId][commentId] -= 1;
+
+        return commentLikes[postId][commentId][user];
     }
-    function likePost(address postOwner, uint id, address user) external {
-        postLikes[postOwner][id][user] = !postLikes[postOwner][id][user];
-        if (postLikes[postOwner][id][user]) postLikesCounts[postOwner][id] += 1;
-        else postLikesCounts[postOwner][id] -= 1;
+
+    function toggleLikePost(uint postId, address user) external returns (bool) {
+        postLikes[postId][user] = !postLikes[postId][user];
+        if (postLikes[postId][user]) postLikesCounts[postId] = postLikesCounts[postId] + 1;
+        else postLikesCounts[postId] = postLikesCounts[postId] - 1;
+
+        return postLikes[postId][user];
+    }
+
+    function getPostLikesCounts(uint postId) external view returns (uint){
+        return postLikesCounts[postId];
+    }
+
+    function getPostCommentLikesCount(uint postId, uint commentId) external view returns (uint) {
+        return commentLikesCounts[postId][commentId];
     }
 }
